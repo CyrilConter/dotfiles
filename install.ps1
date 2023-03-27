@@ -10,3 +10,4 @@ scoop install oh-my-posh
 scoop install posh-git
 scoop install azure-cli
 scoop install gcloud
+scoop install powertoys
