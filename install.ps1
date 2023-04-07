@@ -10,5 +10,4 @@ scoop install oh-my-posh
 scoop install posh-git
 scoop install azure-cli
 scoop install azurestorageexplorer
-scoop install gcloud
 scoop install powertoys
