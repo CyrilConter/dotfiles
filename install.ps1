@@ -12,3 +12,4 @@ scoop install azure-cli
 scoop install azurestorageexplorer
 scoop install powertoys
 scoop install draw.io
+scoop install obsidian
