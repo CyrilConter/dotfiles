@@ -11,3 +11,4 @@ scoop install posh-git
 scoop install azure-cli
 scoop install azurestorageexplorer
 scoop install powertoys
+scoop install draw.io
