@@ -1,0 +1,47 @@
+; ~/.gitconfig — managed by dotfiles repo
+;
+; Per-machine overrides (user.email, signing keys, etc.) go in
+; ~/.gitconfig.local, which is NOT committed. See the [include]
+; directive at the bottom.
+
+[user]
+    name = Cyril Conter
+    ; email is set per-machine in ~/.gitconfig.local
+
+[init]
+    defaultBranch = main
+
+[core]
+    autocrlf = input
+    excludesfile = ~/.gitignore_global
+    editor = code --wait
+
+[pull]
+    rebase = false
+
+[push]
+    default = simple
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+
+[diff]
+    colorMoved = default
+
+[color]
+    ui = auto
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    cm = commit -m
+    lg = log --oneline --graph --decorate --all -n 30
+    last = log -1 HEAD
+    unstage = reset HEAD --
+
+; Per-machine overrides — must be the last entry so it can override
+; anything above. The file may not exist, which is fine.
+[include]
+    path = ~/.gitconfig.local

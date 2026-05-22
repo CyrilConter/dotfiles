@@ -1,0 +1,13 @@
+# Never commit machine-specific or sensitive files
+*.local
+*.secret
+.env
+.env.*
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor cruft
+*.swp
+.idea/
