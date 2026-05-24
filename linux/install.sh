@@ -73,7 +73,7 @@ if command -v zsh >/dev/null 2>&1; then
 fi
 
 log "Linking git config"
-link "$SHARED_DIR/git/gitconfig"   "$HOME/.gitconfig"
+link "$SHARED_DIR/git/gitconfig"        "$HOME/.gitconfig"
 link "$SHARED_DIR/git/gitignore_global" "$HOME/.gitignore_global"
 
 log "Linking VS Code settings"
@@ -86,6 +86,17 @@ link "$LINUX_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
 
 log "Linking Starship config"
 link "$SHARED_DIR/starship/starship.toml" "$HOME/.config/starship.toml"
+
+log "Linking personal scripts (~/.local/bin)"
+# Every executable in linux/bin/ becomes available on PATH.
+# (bashrc already prepends $HOME/.local/bin.)
+if [[ -d "$LINUX_DIR/bin" ]]; then
+  mkdir -p "$HOME/.local/bin"
+  for script in "$LINUX_DIR/bin/"*; do
+    [[ -f "$script" ]] || continue
+    link "$script" "$HOME/.local/bin/$(basename "$script")"
+  done
+fi
 
 # ---- Setup scripts -----------------------------------------------------------
 if [[ "$RUN_SETUP" == 1 ]]; then
