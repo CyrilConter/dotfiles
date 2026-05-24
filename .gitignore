@@ -7,6 +7,8 @@
 # OS junk
 .DS_Store
 Thumbs.db
+# WSL/NTFS "mark of the web" metadata sidecars
+*:Zone.Identifier
 
 # Editor cruft
 *.swp
