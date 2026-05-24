@@ -81,6 +81,9 @@ VSCODE_USER_DIR="$HOME/.config/Code/User"
 link "$SHARED_DIR/vscode/settings.json"    "$VSCODE_USER_DIR/settings.json"
 link "$SHARED_DIR/vscode/keybindings.json" "$VSCODE_USER_DIR/keybindings.json"
 
+log "Linking tmux config"
+link "$LINUX_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
+
 # ---- Setup scripts -----------------------------------------------------------
 if [[ "$RUN_SETUP" == 1 ]]; then
   log "Running setup scripts"
