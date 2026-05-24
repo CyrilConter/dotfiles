@@ -1,0 +1,28 @@
+# ~/.gitconfig.local — per-machine git identity
+# -----------------------------------------------
+# This is an EXAMPLE template. Copy it to ~/.gitconfig.local on each
+# machine and replace the placeholders. The real file lives OUTSIDE
+# the repo and is never committed.
+#
+#   cp docs/gitconfig.local.example ~/.gitconfig.local
+#   # then edit ~/.gitconfig.local with your real values
+
+[user]
+    name  = Your Name
+    # For public-facing GitHub work, use the privacy email from
+    # https://github.com/settings/emails — looks like:
+    #   12345678+yourusername@users.noreply.github.com
+    email = your-default-email@example.com
+
+# Optional: GPG/SSH commit signing
+# [user]
+#     signingkey = ~/.ssh/id_ed25519.pub
+# [gpg]
+#     format = ssh
+# [commit]
+#     gpgsign = true
+
+# Optional: load a different email automatically when working in
+# Azure DevOps repos. Requires git 2.36+.
+# [includeIf "hasconfig:remote.*.url:git@ssh.dev.azure.com:**/**"]
+#     path = ~/.gitconfig-work

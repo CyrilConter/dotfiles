@@ -1,0 +1,39 @@
+# ~/.ssh/config — managed from dotfiles repo
+# Copy this file to ~/.ssh/config and adjust if needed.
+# Remember: chmod 600 ~/.ssh/config
+
+# ---- Sensible defaults for all hosts -------------------------------
+Host *
+    AddKeysToAgent yes
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    # Multiplex connections — second+ SSH to the same host reuses
+    # the existing channel, much faster for git over SSH.
+    ControlMaster auto
+    ControlPath ~/.ssh/cm-%r@%h:%p
+    ControlPersist 10m
+
+# ---- GitHub --------------------------------------------------------
+Host github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+# ---- Azure DevOps --------------------------------------------------
+# Azure DevOps still serves RSA host keys, but modern OpenSSH
+# disables RSA by default. These two lines explicitly re-enable it
+# for Azure DevOps only — GitHub is unaffected.
+Host ssh.dev.azure.com vs-ssh.visualstudio.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    HostkeyAlgorithms +ssh-rsa
+    PubkeyAcceptedAlgorithms +ssh-rsa
+
+# ---- Example: per-service key (uncomment if you want separation) ---
+# Host github-work
+#     HostName github.com
+#     User git
+#     IdentityFile ~/.ssh/id_ed25519_work
+#     IdentitiesOnly yes
+# Then clone with: git clone git@github-work:org/repo.git
