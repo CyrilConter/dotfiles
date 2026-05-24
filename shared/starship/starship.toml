@@ -1,0 +1,100 @@
+# Starship prompt configuration — shared across Linux & Windows.
+# Reference: https://starship.rs/config/
+# Presets:   https://starship.rs/presets/
+#
+# Edit this file in shared/starship/ and both machines pick up the change
+# on next shell launch.
+
+# Don't print a new line at the start of the prompt.
+add_newline = true
+
+# Order of modules. Anything not listed uses its default position.
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$python\
+$nodejs\
+$rust\
+$golang\
+$docker_context\
+$cmd_duration\
+$line_break\
+$character"""
+
+# Two-line prompt: info above, prompt arrow below. Keeps long paths readable.
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol   = "[✗](bold red)"
+
+[username]
+style_user = "bold cyan"
+style_root = "bold red"
+format     = "[$user]($style)"
+show_always = false           # only show when SSH'd or running as root
+
+[hostname]
+ssh_only  = true              # only show hostname when connected via SSH
+format    = "[@$hostname](bold green) "
+
+[directory]
+truncation_length = 4
+truncate_to_repo  = true      # if in a git repo, show path relative to repo root
+style             = "bold blue"
+
+[git_branch]
+symbol = " "
+style  = "bold purple"
+
+[git_status]
+style    = "bold yellow"
+ahead    = "⇡${count}"
+behind   = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+modified = "✱${count}"
+staged   = "[++\\($count\\)](green)"
+untracked = "?${count}"
+stashed  = "$"
+conflicted = "="
+
+[cmd_duration]
+min_time = 2000               # only show duration for commands taking >2s
+format   = "took [$duration](yellow) "
+
+[python]
+symbol = " "
+# Show python version + virtualenv name if active.
+format = "[$symbol${pyenv_prefix}(${version} )(\\($virtualenv\\) )]($style)"
+style  = "bold yellow"
+
+[nodejs]
+symbol = " "
+style  = "bold green"
+# Only show in directories with package.json / .nvmrc / etc.
+detect_files = ["package.json", ".nvmrc", ".node-version"]
+
+[rust]
+symbol = " "
+style  = "bold red"
+
+[golang]
+symbol = " "
+style  = "bold cyan"
+
+[docker_context]
+symbol = " "
+style  = "bold blue"
+only_with_files = true        # only show in dirs with Dockerfile / compose file
+
+# Disable modules that add noise for most workflows. Uncomment to enable.
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[package]
+disabled = true               # version of current package — usually noise
