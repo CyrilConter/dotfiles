@@ -8,21 +8,43 @@ These steps are intentionally not scripted — they're one-time per
 machine, they involve secrets, and you want to know exactly what
 ends up where.
 
-## 1. Generate an SSH key
+## 1. Generate SSH keys
 
 One key per machine. Never copy private keys between machines —
-generate a new one each time.
+generate fresh ones each time.
+
+**You need two keys**, because GitHub and Azure DevOps don't agree on
+key algorithms:
+
+- **GitHub**: ed25519 (modern, short, fast).
+- **Azure DevOps**: RSA. Microsoft's docs are explicit: *"The only
+  SSH key type supported by Azure DevOps is RSA."* ed25519 is
+  rejected.
+
+### ed25519 key (for GitHub)
 
 ```bash
 ssh-keygen -t ed25519 -C "<machine-label>"
 ```
 
-Notes:
+Accept the default path (`~/.ssh/id_ed25519`).
+
+### RSA key (for Azure DevOps)
+
+```bash
+ssh-keygen -t rsa-sha2-512 -f ~/.ssh/id_rsa_azure -C "<machine-label>-azuredevops"
+```
+
+- `-t rsa-sha2-512` selects the modern RSA signature algorithm. (`-t
+  rsa` works too — same key material, different default signature.)
+- `-f ~/.ssh/id_rsa_azure` keeps it separate from the ed25519 key so
+  `~/.ssh/config` can route each host to the right one.
+
+For both:
 - `-C` is just a comment stored in the public key. A machine label
   (e.g. `personal-desktop`, `work-laptop`) is fine and avoids putting
   your email there. The comment is visible to anyone you share the
   public key with.
-- Press Enter to accept the default path (`~/.ssh/id_ed25519`).
 - Set a passphrase. The ssh-agent will cache it for the session so
   you only type it once per login.
 
@@ -36,21 +58,21 @@ cp ~/dotfiles/linux/ssh/config.template ~/.ssh/config
 chmod 600 ~/.ssh/config
 ```
 
-The template covers GitHub and Azure DevOps and includes the
-RSA-algorithm workaround that Azure DevOps requires on modern
-OpenSSH clients.
+The template routes GitHub to `~/.ssh/id_ed25519` and Azure DevOps to
+`~/.ssh/id_rsa_azure`, with `IdentitiesOnly yes` so each host only
+tries its own key (Azure DevOps will fail authentication on the first
+wrong key offered — see troubleshooting below).
 
-## 3. Add the public key to each service
+## 3. Add the public keys to each service
 
-Print your public key:
+### GitHub (ed25519)
+
+Print the ed25519 public key:
 
 ```bash
 cat ~/.ssh/id_ed25519.pub
 ```
 
-Copy the entire line and add it to each service you use:
-
-### GitHub
 1. https://github.com/settings/keys → **New SSH key**
 2. Title: the machine label (e.g. `personal-desktop`)
 3. Paste the public key, save
@@ -63,9 +85,21 @@ ssh -T git@github.com
 # Expected: "Hi <username>! You've successfully authenticated..."
 ```
 
-### Azure DevOps
+### Azure DevOps (RSA)
+
+Print the RSA public key:
+
+```bash
+cat ~/.ssh/id_rsa_azure.pub
+```
+
 1. Top-right user menu → **User settings** → **SSH public keys**
-2. **Add** → paste the public key, give it a name, save
+2. **+ New Key** → paste the public key, give it a name, save
+3. Avoid leading/trailing whitespace or newlines when pasting — Azure
+   DevOps is picky about this.
+
+Note: you must repeat the upload for **each Azure DevOps organization**
+you connect to (the key is scoped to one org).
 
 Test:
 ```bash
@@ -167,12 +201,39 @@ fi
 ## Troubleshooting
 
 **`Permission denied (publickey)` on first push.** The key isn't
-loaded in the agent. Run `ssh-add ~/.ssh/id_ed25519`.
+loaded in the agent. Run `ssh-add ~/.ssh/id_ed25519` (GitHub) or
+`ssh-add ~/.ssh/id_rsa_azure` (Azure DevOps).
 
-**`no matching host key type found` on Azure DevOps.** Your
-`~/.ssh/config` is missing the `HostkeyAlgorithms +ssh-rsa` and
-`PubkeyAcceptedAlgorithms +ssh-rsa` lines for Azure DevOps. Copy
-them from `linux/ssh/config.template`.
+**`Permission denied (publickey)` on Azure DevOps specifically.**
+Azure DevOps rejects ed25519 — make sure you uploaded the contents of
+`~/.ssh/id_rsa_azure.pub`, not `~/.ssh/id_ed25519.pub`. Also confirm
+your `~/.ssh/config` has `IdentityFile ~/.ssh/id_rsa_azure` and
+`IdentitiesOnly yes` under the `ssh.dev.azure.com` block — without
+`IdentitiesOnly`, SSH may offer the ed25519 key first and Azure
+DevOps fails immediately on the wrong key rather than trying the next
+one.
+
+**`no matching host key type found` on Azure DevOps.** Older Azure
+DevOps *Server* (self-hosted) versions only served `ssh-rsa` host
+keys. Modern Azure DevOps *Services* (cloud) uses `rsa-sha2-256/512`
+and works with default OpenSSH 8.8+ settings. If you genuinely hit
+this on a self-hosted server, add the legacy workaround:
+
+```
+Host <your-server-host>
+    HostkeyAlgorithms +ssh-rsa
+    PubkeyAcceptedAlgorithms +ssh-rsa
+```
+
+Do **not** add these lines for `ssh.dev.azure.com` — Microsoft's
+current docs explicitly recommend removing them.
+
+**`ssh-rsa is about to be deprecated`** warning from Azure DevOps.
+You're authenticating with the legacy `ssh-rsa` signature instead of
+`rsa-sha2-256/512`. Make sure your RSA key was generated with
+`ssh-keygen -t rsa-sha2-512` (or use `-t rsa` on OpenSSH 8.2+ which
+defaults to the sha2 signatures), and remove any `+ssh-rsa` overrides
+from `~/.ssh/config`.
 
 **GitHub says "successfully authenticated, but...".** You haven't
 authorized the key for your SAML SSO organization. Go to
