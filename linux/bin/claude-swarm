@@ -10,8 +10,8 @@
 #   - For each NAME passed, creates (or reuses) a worktree at ../<repo>-<NAME>
 #     on a branch of the same name.
 #   - Creates a tmux session with one window per worktree, running `claude`
-#     in each. The session also gets a "control" window with git + lazygit
-#     for orchestrating from outside.
+#     in each. The session also gets a "control" window in the original
+#     repo root for git operations and orchestration from outside.
 #
 # Flags:
 #   -s SESSION   Override the tmux session name (default: <repo>-swarm)

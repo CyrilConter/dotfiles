@@ -35,7 +35,9 @@ sudo apt install -y \
   htop \
   tree \
   tmux \
-  zsh
+  zsh \
+  shellcheck \
+  direnv
 
 # Ubuntu installs these under different names — create the expected aliases.
 # (fd → fdfind, bat → batcat). The aliases live in bash_aliases so they persist.

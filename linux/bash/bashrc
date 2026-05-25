@@ -43,6 +43,13 @@ export NVM_DIR="$HOME/.nvm"
 [[ -f /usr/share/doc/fzf/examples/key-bindings.bash ]] && . /usr/share/doc/fzf/examples/key-bindings.bash
 [[ -f /usr/share/bash-completion/completions/fzf ]] && . /usr/share/bash-completion/completions/fzf
 
+# ---- direnv -------------------------------------------------------
+# Auto-loads per-project .envrc files (API keys, PYTHONPATH, etc.).
+# Activate with `direnv allow` inside a project.
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook bash)"
+fi
+
 # ---- Prompt (Starship) --------------------------------------------
 # Config lives in the dotfiles repo under shared/starship/. The
 # install.sh symlinks it to ~/.config/starship.toml — Starship reads

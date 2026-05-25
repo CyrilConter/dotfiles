@@ -27,15 +27,26 @@ else
 fi
 
 # --- NVIDIA / CUDA hint -------------------------------------------------------
+# Detect WSL: under WSL, the GPU is provided by the *Windows* NVIDIA driver
+# (exposed at /usr/lib/wsl/lib). Installing the Linux nvidia-driver inside
+# WSL is wrong and will break the GPU passthrough.
 if command -v nvidia-smi >/dev/null 2>&1; then
   log "NVIDIA driver detected:"
   nvidia-smi | head -15 || true
 else
-  warn "No NVIDIA driver detected."
-  warn "If this machine has an NVIDIA GPU, install the driver manually:"
-  warn "  sudo ubuntu-drivers install"
-  warn "  reboot"
-  warn "  nvidia-smi   # verify"
+  if grep -qi microsoft /proc/version 2>/dev/null; then
+    warn "Running under WSL and 'nvidia-smi' is not on PATH."
+    warn "Do NOT install nvidia-driver inside WSL — install the NVIDIA driver"
+    warn "on Windows. It exposes the GPU to WSL via /usr/lib/wsl/lib, and"
+    warn "'nvidia-smi' should then work here without any Linux-side driver."
+    warn "Reference: https://docs.nvidia.com/cuda/wsl-user-guide/"
+  else
+    warn "No NVIDIA driver detected."
+    warn "If this machine has an NVIDIA GPU, install the driver manually:"
+    warn "  sudo ubuntu-drivers install"
+    warn "  reboot"
+    warn "  nvidia-smi   # verify"
+  fi
   warn "Most ML frameworks (PyTorch, JAX) bundle their own CUDA runtime,"
   warn "so you usually do not need the full CUDA toolkit unless compiling."
 fi
