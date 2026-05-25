@@ -20,15 +20,15 @@ Host github.com
     IdentitiesOnly yes
 
 # ---- Azure DevOps --------------------------------------------------
-# Azure DevOps still serves RSA host keys, but modern OpenSSH
-# disables RSA by default. These two lines explicitly re-enable it
-# for Azure DevOps only — GitHub is unaffected.
+# Azure DevOps ONLY accepts RSA user keys (ed25519 is rejected). See
+# docs/SSH_AND_IDENTITY.md for how to generate ~/.ssh/id_rsa_azure.
+# Modern Azure DevOps Services uses rsa-sha2-256/512 signatures, so
+# no HostkeyAlgorithms / PubkeyAcceptedAlgorithms workaround is
+# needed with OpenSSH 8.8+ — the RSA key is enough.
 Host ssh.dev.azure.com vs-ssh.visualstudio.com
     User git
-    IdentityFile ~/.ssh/id_ed25519
+    IdentityFile ~/.ssh/id_rsa_azure
     IdentitiesOnly yes
-    HostkeyAlgorithms +ssh-rsa
-    PubkeyAcceptedAlgorithms +ssh-rsa
 
 # ---- Example: per-service key (uncomment if you want separation) ---
 # Host github-work
