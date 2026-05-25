@@ -1,0 +1,32 @@
+# Global gitignore — applies to all repos
+# Pointed to by core.excludesfile in gitconfig.
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+*.swp
+*.swo
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.local
+
+# Node
+node_modules/
+
+# Logs
+*.log
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

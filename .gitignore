@@ -1,0 +1,36 @@
+# Never commit machine-specific or sensitive files
+# -------------------------------------------------
+# Identity / secrets
+*.local
+*.secret
+.env
+.env.*
+.envrc
+
+# SSH and crypto keys — never, ever
+id_rsa
+id_ed25519
+id_ecdsa
+*.pem
+*.pub
+*.key
+
+# Common credential files
+.netrc
+.npmrc
+credentials.json
+.aws/credentials
+.azure/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor cruft
+*.swp
+*.swo
+.idea/
+
+# Backups created by install.sh when it replaces real files
+*.backup.*

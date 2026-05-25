@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+#
+# claude-swarm — spin up a tmux session with multiple Claude Code agents,
+# one per git worktree.
+#
+# Usage:
+#   claude-swarm [-s session] [-n] feature-a feature-b feature-c
+#
+# Behavior:
+#   - For each NAME passed, creates (or reuses) a worktree at ../<repo>-<NAME>
+#     on a branch of the same name.
+#   - Creates a tmux session with one window per worktree, running `claude`
+#     in each. The session also gets a "control" window in the original
+#     repo root for git operations and orchestration from outside.
+#
+# Flags:
+#   -s SESSION   Override the tmux session name (default: <repo>-swarm)
+#   -n           Dry run: print what would happen, do nothing.
+#   -c CMD       Command to launch in each worktree (default: claude)
+#   -h           Help.
+#
+# Example:
+#   cd ~/code/myapp
+#   claude-swarm refactor-auth fix-pagination add-metrics
+#   # → opens tmux with 3 panes, each running `claude` in its own worktree.
+#
+# Pre-reqs: tmux, git, and (if used) the `claude` CLI on PATH.
+
+set -euo pipefail
+
+SESSION=""
+DRY_RUN=0
+LAUNCH_CMD="claude"
+
+usage() { sed -n '2,28p' "$0"; exit "${1:-0}"; }
+
+while getopts ":s:c:nh" opt; do
+  case "$opt" in
+    s) SESSION="$OPTARG" ;;
+    c) LAUNCH_CMD="$OPTARG" ;;
+    n) DRY_RUN=1 ;;
+    h) usage 0 ;;
+    *) usage 1 ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+if [[ $# -lt 1 ]]; then
+  echo "Error: pass at least one feature/branch name." >&2
+  usage 1
+fi
+
+# Must be in a git repo
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "Error: not inside a git repository." >&2
+  exit 1
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+REPO_NAME="$(basename "$REPO_ROOT")"
+PARENT_DIR="$(dirname "$REPO_ROOT")"
+SESSION="${SESSION:-${REPO_NAME}-swarm}"
+
+run() {
+  if [[ "$DRY_RUN" == 1 ]]; then
+    echo "+ $*"
+  else
+    eval "$@"
+  fi
+}
+
+log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
+
+# Refuse to clobber an existing session unless empty/dry.
+if tmux has-session -t "$SESSION" 2>/dev/null; then
+  echo "Session '$SESSION' already exists. Attach with: tmux a -t $SESSION"
+  echo "Or kill it first:                            tmux kill-session -t $SESSION"
+  exit 1
+fi
+
+# Ensure each worktree exists; create if missing.
+declare -a WORKTREES
+for NAME in "$@"; do
+  WT_PATH="${PARENT_DIR}/${REPO_NAME}-${NAME}"
+  WORKTREES+=("$WT_PATH")
+
+  if [[ -d "$WT_PATH" ]]; then
+    log "Worktree exists: $WT_PATH"
+  else
+    log "Creating worktree: $WT_PATH (branch: $NAME)"
+    # Create branch from current HEAD if it doesn't exist; otherwise reuse.
+    if git rev-parse --verify "refs/heads/$NAME" >/dev/null 2>&1; then
+      run "git worktree add '$WT_PATH' '$NAME'"
+    else
+      run "git worktree add -b '$NAME' '$WT_PATH'"
+    fi
+  fi
+done
+
+# Build the tmux session.
+log "Creating tmux session: $SESSION"
+
+# Window 1: "control" — kept in the original repo root for orchestration.
+run "tmux new-session -d -s '$SESSION' -n control -c '$REPO_ROOT'"
+run "tmux send-keys -t '$SESSION:control' 'git worktree list' Enter"
+
+# One window per worktree, named after the feature.
+i=0
+for NAME in "$@"; do
+  WT_PATH="${WORKTREES[$i]}"
+  run "tmux new-window -t '$SESSION' -n '$NAME' -c '$WT_PATH'"
+  run "tmux send-keys -t '$SESSION:$NAME' '$LAUNCH_CMD' Enter"
+  i=$((i + 1))
+done
+
+# Land the user on the first feature window.
+run "tmux select-window -t '$SESSION:$1'"
+
+if [[ "$DRY_RUN" == 1 ]]; then
+  log "(dry run) would attach to: $SESSION"
+else
+  log "Attaching to $SESSION (detach with prefix + d)"
+  tmux attach-session -t "$SESSION"
+fi

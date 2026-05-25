@@ -1,0 +1,63 @@
+# ~/.bashrc — managed by dotfiles repo
+# ------------------------------------------------------------------
+# This file is a symlink to dotfiles/linux/bash/bashrc.
+# Edit there, not here — and commit your changes.
+
+# If not running interactively, do nothing.
+case $- in
+  *i*) ;;
+    *) return;;
+esac
+
+# ---- History ------------------------------------------------------
+HISTCONTROL=ignoreboth         # don't store duplicates or lines starting with space
+HISTSIZE=10000
+HISTFILESIZE=20000
+shopt -s histappend            # append rather than overwrite
+shopt -s checkwinsize          # update LINES/COLUMNS after each command
+
+# ---- Aliases ------------------------------------------------------
+[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
+
+# ---- Completion ---------------------------------------------------
+if ! shopt -oq posix; then
+  if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [[ -f /etc/bash_completion ]]; then
+    . /etc/bash_completion
+  fi
+fi
+
+# ---- PATH ---------------------------------------------------------
+# Personal binaries
+[[ -d "$HOME/.local/bin" ]] && PATH="$HOME/.local/bin:$PATH"
+# Cargo (Rust)
+[[ -d "$HOME/.cargo/bin" ]] && PATH="$HOME/.cargo/bin:$PATH"
+
+# ---- nvm (Node) ---------------------------------------------------
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"
+[[ -s "$NVM_DIR/bash_completion" ]] && \. "$NVM_DIR/bash_completion"
+
+# ---- fzf ----------------------------------------------------------
+[[ -f /usr/share/doc/fzf/examples/key-bindings.bash ]] && . /usr/share/doc/fzf/examples/key-bindings.bash
+[[ -f /usr/share/bash-completion/completions/fzf ]] && . /usr/share/bash-completion/completions/fzf
+
+# ---- direnv -------------------------------------------------------
+# Auto-loads per-project .envrc files (API keys, PYTHONPATH, etc.).
+# Activate with `direnv allow` inside a project.
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook bash)"
+fi
+
+# ---- Prompt (Starship) --------------------------------------------
+# Config lives in the dotfiles repo under shared/starship/. The
+# install.sh symlinks it to ~/.config/starship.toml — Starship reads
+# from there by default, no env var needed.
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init bash)"
+fi
+
+# ---- Machine-specific overrides -----------------------------------
+# Put work-vs-personal differences here. NOT tracked in git.
+[[ -f ~/.bashrc.local ]] && . ~/.bashrc.local

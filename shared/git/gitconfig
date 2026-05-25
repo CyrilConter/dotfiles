@@ -1,0 +1,46 @@
+; ~/.gitconfig — managed by dotfiles repo
+;
+; Per-machine identity (user.name, user.email, signing keys) lives in
+; ~/.gitconfig.local, which is NOT committed. See the [include]
+; directive at the bottom of this file, and docs/SSH_AND_IDENTITY.md
+; for setup steps.
+
+[init]
+    defaultBranch = main
+
+[core]
+    autocrlf = input
+    excludesfile = ~/.gitignore_global
+    editor = code --wait
+
+[pull]
+    rebase = false
+
+[push]
+    default = simple
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+
+[diff]
+    colorMoved = default
+
+[color]
+    ui = auto
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    cm = commit -m
+    lg = log --oneline --graph --decorate --all -n 30
+    last = log -1 HEAD
+    unstage = reset HEAD --
+
+; Per-machine identity and overrides. Must be the last entry so it
+; can override anything above. The file may not exist on a fresh
+; machine — that's fine; git will warn and you'll create it as part
+; of first-time setup (see docs/SSH_AND_IDENTITY.md).
+[include]
+    path = ~/.gitconfig.local

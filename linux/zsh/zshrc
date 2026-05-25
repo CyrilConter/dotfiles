@@ -1,0 +1,13 @@
+# Minimal ~/.zshrc — managed by dotfiles repo
+# Linked only if zsh is installed.
+#
+# This is a placeholder; flesh out when you actually switch to zsh.
+# Recommended next step: install Oh My Zsh
+#   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# then add your config below.
+
+# Source shared aliases
+[[ -f ~/.bash_aliases ]] && source ~/.bash_aliases
+
+# Machine-specific overrides
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

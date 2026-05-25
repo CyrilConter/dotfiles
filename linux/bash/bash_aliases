@@ -1,0 +1,30 @@
+# ~/.bash_aliases — managed by dotfiles repo
+
+# Listing
+alias ll='ls -lah --color=auto'
+alias la='ls -A --color=auto'
+alias l='ls -CF --color=auto'
+
+# Safer defaults
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Ubuntu installs these under wrong names — restore expected ones
+command -v fdfind >/dev/null && alias fd='fdfind'
+command -v batcat >/dev/null && alias bat='batcat'
+
+# Git shortcuts
+alias gs='git status'
+alias gd='git diff'
+alias gl='git log --oneline --graph --decorate -n 20'
+alias gp='git pull'
+alias gco='git checkout'
+
+# Docker shortcuts
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+
+# Misc
+alias ..='cd ..'
+alias ...='cd ../..'
