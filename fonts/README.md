@@ -1,7 +1,8 @@
 # Fonts
 
-The PowerShell prompt config and the VS Code settings both reference
-**Hack Nerd Font**.
+The Starship prompt (used on both Linux and Windows) and the VS Code
+settings reference a **Nerd Font** — Hack on Linux, Hack or
+JetBrainsMono on Windows.
 
 ## Install
 
