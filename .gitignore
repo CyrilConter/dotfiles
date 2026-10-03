@@ -6,6 +6,7 @@
 .env
 .env.*
 .envrc
+.claude/settings.local.json
 
 # SSH and crypto keys — never, ever
 id_rsa
