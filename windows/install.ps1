@@ -102,10 +102,10 @@ $gitignoreSource = Join-Path $SharedDir 'git\gitignore_global'
 $gitignoreTarget = Join-Path $env:USERPROFILE '.gitignore_global'
 New-Link -Source $gitignoreSource -Target $gitignoreTarget
 
-Write-Step "Linking VS Code settings"
-$vscodeDir = Join-Path $env:APPDATA 'Code\User'
-New-Link -Source (Join-Path $SharedDir 'vscode\settings.json')    -Target (Join-Path $vscodeDir 'settings.json')
-New-Link -Source (Join-Path $SharedDir 'vscode\keybindings.json') -Target (Join-Path $vscodeDir 'keybindings.json')
+Write-Step "Linking Claude Code settings"
+$claudeDir = Join-Path $env:USERPROFILE '.claude'
+New-Link -Source (Join-Path $SharedDir 'claude\settings.json')         -Target (Join-Path $claudeDir 'settings.json')
+New-Link -Source (Join-Path $SharedDir 'claude\statusline-command.sh') -Target (Join-Path $claudeDir 'statusline-command.sh')
 
 Write-Step "Linking PowerShell profile"
 # PowerShell 7+ profile location

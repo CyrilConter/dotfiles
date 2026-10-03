@@ -76,10 +76,9 @@ log "Linking git config"
 link "$SHARED_DIR/git/gitconfig"        "$HOME/.gitconfig"
 link "$SHARED_DIR/git/gitignore_global" "$HOME/.gitignore_global"
 
-log "Linking VS Code settings"
-VSCODE_USER_DIR="$HOME/.config/Code/User"
-link "$SHARED_DIR/vscode/settings.json"    "$VSCODE_USER_DIR/settings.json"
-link "$SHARED_DIR/vscode/keybindings.json" "$VSCODE_USER_DIR/keybindings.json"
+log "Linking Claude Code settings"
+link "$SHARED_DIR/claude/settings.json"           "$HOME/.claude/settings.json"
+link "$SHARED_DIR/claude/statusline-command.sh"   "$HOME/.claude/statusline-command.sh"
 
 log "Linking tmux config"
 link "$LINUX_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
