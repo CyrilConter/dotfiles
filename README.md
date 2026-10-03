@@ -18,12 +18,11 @@ Personal dotfiles and machine setup scripts for **Windows** and **Linux (Ubuntu)
 │   ├── git/          Linux-specific git tweaks (if any)
 │   ├── ssh/          ~/.ssh/config template
 │   ├── tmux/         tmux configuration
-│   ├── vscode/       Linux-specific VS Code settings (if any)
 │   └── setup/        Numbered scripts to install dev tooling
 ├── shared/           Cross-platform configs (used on both)
 │   ├── git/          gitconfig
 │   ├── starship/     Starship prompt config (bash/zsh/pwsh)
-│   └── vscode/       VS Code settings.json, keybindings.json
+│   └── claude/       Claude Code settings.json + status line script
 ├── docs/             First-time setup notes (SSH, identity)
 └── fonts/            Notes on fonts (Hack Nerd Font, etc.)
 ```
@@ -114,6 +113,9 @@ symlinked but no identity set. To finish setup:
    [`docs/gitconfig.local.example`](docs/gitconfig.local.example) to
    `~/.gitconfig.local` and edit it
 3. **Nerd Font** — see [`fonts/README.md`](fonts/README.md)
+4. **VS Code** — settings, keybindings and extensions are not managed
+   here. Turn on the built-in Settings Sync (Accounts menu →
+   *Backup and Sync Settings…*) and sign in with GitHub.
 
 ## Fonts
 
