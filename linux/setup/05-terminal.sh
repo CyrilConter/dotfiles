@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #
 # 05 - Terminal stack
-# tmux (terminal multiplexer) + Ghostty (terminal emulator).
+# tmux (terminal multiplexer) + Ghostty (terminal emulator) + herdr
+# (background runtime for coding agents).
 #
 # Why both: tmux gives session persistence and multi-pane management
 # (critical for running multiple Claude Code agents in parallel and
@@ -34,23 +35,29 @@ else
 fi
 
 # --- Ghostty ------------------------------------------------------------------
-# Ghostty doesn't yet have an official apt repo for Ubuntu, but there's a
-# community-maintained build path. Easiest reliable install is via the
-# official install script which fetches a prebuilt binary.
+# Ubuntu 26.04+ ships Ghostty in its own archive (universe), so a plain apt
+# install is enough — no snap, no third-party repo. This repo targets 26.04+.
 #
-# If you prefer to skip Ghostty (e.g. you're happy with GNOME Terminal),
-# comment out this block.
+# If a snap Ghostty is already present, it's left alone; switch with:
+#   sudo snap remove ghostty && sudo apt install -y ghostty
 if ! command -v ghostty >/dev/null 2>&1; then
-  log "Installing Ghostty"
-  # Snap is currently Ghostty's recommended Linux distribution method.
-  if command -v snap >/dev/null 2>&1; then
-    sudo snap install ghostty --classic
-  else
-    warn "snap not available — install Ghostty manually from https://ghostty.org"
-    warn "Skipping Ghostty install."
-  fi
+  log "Installing Ghostty (Ubuntu archive)"
+  sudo apt install -y ghostty
 else
-  log "Ghostty already installed, skipping"
+  log "Ghostty already installed ($(command -v ghostty)), skipping"
+fi
+
+# --- herdr --------------------------------------------------------------------
+# Background runtime for coding agents (https://herdr.dev): keeps agents
+# running across projects when you disconnect, with a sidebar showing which
+# ones are working / blocked / idle. Complements tmux and claude-swarm.
+# The official installer verifies the SHA-256 and drops the binary in
+# ~/.local/bin (already on PATH via bashrc). Update later with `herdr update`.
+if ! command -v herdr >/dev/null 2>&1 && [[ ! -x "$HOME/.local/bin/herdr" ]]; then
+  log "Installing herdr"
+  curl -fsSL https://herdr.dev/install.sh | sh
+else
+  log "herdr already installed, skipping (update with: herdr update)"
 fi
 
 log "Terminal stack setup complete"
@@ -59,3 +66,4 @@ log "Next steps:"
 log "  1. Open a new terminal and run: tmux"
 log "  2. Press Ctrl-a then capital I to install tmux plugins"
 log "  3. (Optional) Set Ghostty as your default terminal in GNOME settings"
+log "  4. Run: herdr   (update later with: herdr update)"

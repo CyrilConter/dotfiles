@@ -9,7 +9,7 @@ idempotent — safe to re-run.
 | `02-dev-tools.sh`    | VS Code, GitHub CLI, Docker, nvm, rustup                    |
 | `03-ai-ml.sh`        | uv (Python), Ollama (local LLMs), NVIDIA driver hint        |
 | `04-browsers.sh`     | Firefox (Mozilla APT, not snap) and Google Chrome           |
-| `05-terminal.sh`     | tmux + TPM, Ghostty terminal emulator                       |
+| `05-terminal.sh`     | tmux + TPM, Ghostty (apt), herdr (agent runtime)            |
 | `06-prompt.sh`       | Starship prompt (config in `shared/starship/`)              |
 | `09-cloud-cli.sh`    | Azure CLI + `az devops` extension                           |
 

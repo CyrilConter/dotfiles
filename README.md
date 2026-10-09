@@ -47,7 +47,7 @@ manually — see [`fonts/README.md`](fonts/README.md).
 The PowerShell prompt is **Starship**, configured cross-platform from
 [`shared/starship/starship.toml`](shared/starship/starship.toml).
 
-### Linux (Ubuntu 24.04+)
+### Linux (Ubuntu 26.04+)
 
 ```bash
 sudo apt update && sudo apt install -y git
