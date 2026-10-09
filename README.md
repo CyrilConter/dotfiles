@@ -18,6 +18,7 @@ Personal dotfiles and machine setup scripts for **Windows** and **Linux (Ubuntu)
 │   ├── git/          Linux-specific git tweaks (if any)
 │   ├── ssh/          ~/.ssh/config template
 │   ├── tmux/         tmux configuration
+│   ├── gnome/        GNOME desktop + extension settings (dconf)
 │   └── setup/        Numbered scripts to install dev tooling
 ├── shared/           Cross-platform configs (used on both)
 │   ├── git/          gitconfig
@@ -60,7 +61,12 @@ The installer will:
 
 1. Symlink config files from this repo into `$HOME`
 2. Run the numbered scripts in `linux/setup/` to install dev tooling
-   (build-essential, VS Code, Docker, uv, etc.)
+   (build-essential, VS Code, Docker, uv, etc.), desktop apps, GNOME
+   extensions and desktop settings. The NVIDIA driver is only installed
+   when an NVIDIA GPU is detected.
+
+Run it from a terminal **inside the GNOME desktop** (not over SSH) so the
+GNOME settings can be applied, then log out and back in.
 
 You can run individual setup scripts instead of the full installer if
 you only want part of the stack. See `linux/setup/README.md`.
